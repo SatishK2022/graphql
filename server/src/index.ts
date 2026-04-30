@@ -1,38 +1,25 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import { ApolloServer } from "@apollo/server"
 import { startStandaloneServer } from "@apollo/server/standalone"
+import { schema } from "./graphql/schema/schema.js";
+import connectToDB from "./database/database.js";
+import { getAllUsers } from "./controllers/user.controller.js";
+import { getAllProducts } from "./controllers/product.controller.js";
+import { getAllCategories } from "./controllers/category.controller.js";
 
-
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
-const typeDefs = `#graphql
-  type Book {
-    title: String
-    author: String
-  }
- 
-  type Query {
-    books: [Book]
-  }
-`;
-
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
+connectToDB();
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  typeDefs: schema,
+  resolvers: {
+    Query: {
+      users: getAllUsers,
+      products: getAllProducts,
+      categories: getAllCategories,
+    },
+  },
 });
 
 const { url } = await startStandaloneServer(server, {
