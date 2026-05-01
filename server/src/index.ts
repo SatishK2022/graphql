@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import express from "express"
+import cors from "cors"
 import connectToDB from "./database/database.js";
 import { connectGraphQL } from "./graphql/graphql.js";
 import { expressMiddleware } from '@as-integrations/express5';
@@ -14,6 +15,7 @@ const graphqlServer = connectGraphQL();
 await graphqlServer.start();
 
 app.use(express.json());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use("/graphql", expressMiddleware(graphqlServer));
 
 app.get("/", (req, res) => res.send("Hello World!"));
