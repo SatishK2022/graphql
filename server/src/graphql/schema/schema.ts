@@ -1,5 +1,5 @@
 
-export const schema = `#graphql
+export const graphqlSchema = `#graphql
     type User {
         _id: ID!
         firstName: String!
@@ -46,10 +46,14 @@ export const schema = `#graphql
         updatedAt: String
     }
 
-
     type Query {
         users: [User],
         products: [Product],
-        categories: [Category]
+        categories: [Category],
+        product(id: ID!): Product
+    }
+
+    type Mutation {
+        createUser(firstName: String!, email: String!, password: String!): User
     }
 `;

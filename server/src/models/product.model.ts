@@ -1,4 +1,24 @@
-import { model, Schema, Types } from "mongoose";
+import { model, Schema } from "mongoose";
+
+interface SizeType {
+    id: string;
+    size: string;
+    stock: number;
+}
+
+interface ProductType {
+    name: string;
+    slug: string;
+    description: string;
+    images: string[];
+    sizes: SizeType[];
+    category: string;
+    mrp: number;
+    price: number;
+    onSale: boolean;
+    isFeatured: boolean;
+    isWishlist: boolean;
+}
 
 const sizeSchema = new Schema({
     size: {
@@ -31,7 +51,7 @@ const productSchema = new Schema({
     sizes: [sizeSchema],
     category: {
         type: Schema.Types.ObjectId,
-        ref: "Category", // Ensure this matches your Category model name
+        ref: "Category",
         required: true
     },
     mrp: {
@@ -61,4 +81,5 @@ const productSchema = new Schema({
 }, { timestamps: true });
 
 const Product = model("Product", productSchema);
+export type { ProductType };
 export default Product;

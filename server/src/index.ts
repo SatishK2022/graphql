@@ -1,29 +1,21 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-import { ApolloServer } from "@apollo/server"
-import { startStandaloneServer } from "@apollo/server/standalone"
-import { schema } from "./graphql/schema/schema.js";
+import express from "express"
 import connectToDB from "./database/database.js";
-import { getAllUsers } from "./controllers/user.controller.js";
-import { getAllProducts } from "./controllers/product.controller.js";
-import { getAllCategories } from "./controllers/category.controller.js";
+import { connectGraphQL } from "./graphql/graphql.js";
+import { expressMiddleware } from '@as-integrations/express5';
+
+const app = express();
 
 connectToDB();
 
-const server = new ApolloServer({
-  typeDefs: schema,
-  resolvers: {
-    Query: {
-      users: getAllUsers,
-      products: getAllProducts,
-      categories: getAllCategories,
-    },
-  },
-});
+const graphqlServer = connectGraphQL();
+await graphqlServer.start();
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
+app.use(express.json());
+app.use("/graphql", expressMiddleware(graphqlServer));
 
-console.log(`🚀  Server ready at: ${url}`);
+app.get("/", (req, res) => res.send("Hello World!"));
+app.listen(4000, () => console.log(`🚀 Server ready at http://localhost:4000`));
+
